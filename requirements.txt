@@ -1,0 +1,4 @@
+PyQT5
+PyYAML
+ffprobe-python
+NodeGraphQt

@@ -1,0 +1,32 @@
+QWidget {
+    background-color: #cfcfcf;
+}
+
+QHeaderView::section {
+    border: 1px solid #ffffff;
+    font-size: 12pt;
+    background-color: #cfcfcf;
+}
+
+QTableView {
+    gridline-color: #ffffff;
+    font-size: 12pt;
+    border: none;
+}
+
+QTableView::item {
+    border: 1px solid #ffffff;
+    color: #333; /* Text color for cells */
+}
+
+QGroupBox {
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    margin: 20px 20px 20px 20px;
+}
+
+QGroupBox:title {
+    color: #5355c0;
+    font-weight: bold;
+    font-size: 14pt;
+}

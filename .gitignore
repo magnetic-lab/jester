@@ -1,0 +1,96 @@
+# Compiled Python files #
+#########################
+*.pyc
+*.pyd
+*.pyo
+*.pex
+*.pyz
+
+
+# Environments #
+################
+.env
+.venv
+venv/
+
+
+# Compiled source #
+###################
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+
+# PyCharm #
+###########
+.idea
+
+
+# VS Code #
+###########
+.vscode
+
+
+# Testing and Documentation fragments #
+#######################################
+.coverage
+.cache/
+.pytest_cache/
+.tox/
+__pycache__/
+dist/
+sdist/
+docs/_build/
+docs/build/
+docs_source/_build/
+docs_source/build/
+htmlcov/
+junit_report.xml
+coverage.xml
+
+
+# Build fragments #
+###################
+build
+dist
+*.egg
+*.eggs
+*.egg-info
+__ips__.py
+
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+!source/marcom_ips/maya_tools_rldiff/vendor.zip
+
+
+# Log files #
+#############
+*.log
+*.sql
+*.sqlite
+*.rej
+
+
+# OS-specific stuff #
+#####################
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+Desktop.ini
+Thumbs.db
+
+# Jester-specific #
+###################
+debug.py
