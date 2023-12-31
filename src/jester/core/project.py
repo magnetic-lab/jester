@@ -14,14 +14,18 @@ class JesterProject:
     def __str__(self) -> str:
         return self.__repr__()
 
-    def add_location(self, target, children=None):
+    def add_location(self, target, children=None, qt_callback=None):
         target_directory = self.directory(target, return_existing=True)
         existing_parts = target_directory.path(relative=True, include_root=False).split("/")
         target_parts = target.split("/")
 
         for node in [part for part in target_parts if part not in existing_parts]:
-            newly_created_directory = target_directory.insert_child(node)
+            if qt_callback:
+                newly_created_directory = qt_callback(target_directory, node)
+            else:
+                newly_created_directory = target_directory.append_child(node)
             target_directory = newly_created_directory
+        return target_directory
 
     def exists(self, target):
         return bool(self.directory(target, return_existing=False))

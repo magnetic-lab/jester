@@ -1,8 +1,7 @@
 from PyQt5.QtCore import (
     QModelIndex,
-    Qt,
     pyqtSlot,
-    pyqtSignal
+    pyqtSignal,
 )
 
 from PyQt5.QtWidgets import (
@@ -79,10 +78,12 @@ class ProjectPropertiesNodeTreeViewWidget(QWidget):
         layout.addWidget(self.tree_view)
         layout.setContentsMargins(0, 0, 0, 0)
         self.add_directory_window = AddNewDirectoryWindow()
+        
         # signals
         add_root_directory_button.clicked.connect(self.add_directory_window.show)
         self.add_directory_window.submitted.connect(self.add_location)
-        tree_view_model.rowsInserted.connect(self.tree_view.on_rows_inserted)
+        tree_view_model.rowsInserted.connect(self.tree_view.expand_index)
+        tree_view_model.rowsInserted.connect(self.tree_view.scroll_to_index)
 
     @pyqtSlot(str)
     def add_location(self, location: str):

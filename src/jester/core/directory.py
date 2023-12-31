@@ -18,7 +18,7 @@ class JesterDirectory:
     def __str__(self) -> str:
         return self.__repr__()
 
-    def insert_child(self, child: Union[str, "JesterDirectory"]):
+    def append_child(self, child: Union[str, "JesterDirectory"]):
         if isinstance(child, str):
             child = JesterDirectory(child)
         self.children.append(child)
@@ -45,3 +45,6 @@ class JesterDirectory:
         if isinstance(node, JesterDirectory):
             return self.project(node.parent)
         return node
+    
+    def is_root(self):
+        return not isinstance(self.parent, JesterDirectory)

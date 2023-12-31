@@ -3,7 +3,8 @@ import os
 from PyQt5.QtCore import (
     QAbstractItemModel,
     QModelIndex,
-    Qt
+    Qt,
+    pyqtSignal
 )
 
 from jester.core import (
@@ -14,10 +15,14 @@ from jester.core import (
 
 
 class ProjectPropertiesTreeViewModel(QAbstractItemModel):
+    directory_added = pyqtSignal(QModelIndex)
 
     def __init__(self, project=None, *args, **kwargs) -> None:
         super(ProjectPropertiesTreeViewModel, self).__init__(*args, **kwargs)
-        self.project = project or JesterProject("JesterProject", "/".join([os.path.expanduser("~"), "jester_project"]))
+        self.project = project or JesterProject("JesterProject", "/".join([os.path.expanduser("~"), "jester_project_root"]))
+
+    # re-implemented `QAbstractItemModel` methods #
+    ###############################################
 
     def rowCount(self, parentIndex):
         if not parentIndex.isValid():
@@ -53,62 +58,20 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
             return QModelIndex()
         return self.createIndex(parentItem.children.index(childItem), 0, parentItem)
     
-    def insert_directory(self, name: str, row: int, parent: QModelIndex = ...) -> JesterDirectory:
-        self.beginInsertRows(parent, row, row + 1)
-        if not parent.isValid():
-            parent = self.project.root
-        else:
-            parent = parent.internalPointer()
-        new_directory = parent.insert_child(row, name)
-        self.endInsertRows()
-        return new_directory
+    # jester methods #
+    ##################
 
     def add_location(self, location: str):
-        """add location
+        return self.project.add_location(location, qt_callback=self.__update_views_callback)
 
-        the for-loop loops over each 'part' in the given location-string and defines `location_` as:
-        ```
-        [i=0]: assets
-        [i=1]: assets/scenes
-        [i=2]: assets/scenes/{scene}
-        [i=3]: assets/scenes/{scene}/{shot}
-        [i=4]: assets/scenes/{scene}/{shot}/{version}
-        [i=5]: assets/scenes/{scene}/{shot}/{version}/{dcc}
-        ```
-
-        Args:
-            location (str): location-string. (example: `assets/scenes/{scene}/{shot}/{version}/{dcc}`)
-
-        Returns:
-            _type_: _description_
-        """
-        # TODO: this method is awful - please simplify
-        existing_directory = self.project.directory(location, return_existing=True)
-        self.project.add_location(location)
-        existing_target = existing_directory.path(relative=True, include_root=False)
-        if existing_target:
-            existing_parts = existing_target.split("/")
+    def __update_views_callback(self, target_directory, child_name):
+        if target_directory.is_root():
+            index = QModelIndex()
         else:
-            existing_parts = []
-        parts = location.split("/")
-        new_parts = [part if part not in existing_parts else None for part in location.split("/")]
-
-
-        for i in range(len(parts)):
-            if not new_parts[i]:
-                continue
-            parent_location = "/".join(parts[0:i])
-            # Find or create the directory at this level
-            if i == 0:
-                parent = self.project.root
-                index = QModelIndex()  # Start with an invalid index for the root
-            else:
-                parent = self.project.directory(parent_location)
-                row = len(parent.children) - 1
-                index = self.createIndex(row, 0, parent)
-            # If the directory doesn't exist, insert it
-            self.beginInsertRows(index, len(parent.children) - 1, len(parent.children) - 1)
-            new_directory = parent.children[len(parent.children) - 1]
-            print(f"informing views that {new_directory} was created...")
-            self.endInsertRows()
+            row = len(target_directory.parent.children) - 1
+            index = self.createIndex(row, 0, target_directory)
+        self.beginInsertRows(index, len(target_directory.children), len(target_directory.children))
+        new_directory = target_directory.append_child(child_name)
+        self.endInsertRows()
+        self.directory_added.emit(index)
         return new_directory
