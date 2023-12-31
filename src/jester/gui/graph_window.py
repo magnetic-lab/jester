@@ -66,9 +66,12 @@ class JesterTurnoverWindow(QWidget):
     def update_node_properties_after_creation(self, node=None):
         if node:
             if isinstance(node, nodes.ProjectPropertiesNode):
-                node_base_widget = node.get_widget("project_properties_tree")
-                node_base_widget.set_label(f"{node.name()} project-tree")
-        pass
+                project_properties_tree = node.get_widget("project_properties_tree")
+                project_properties_tree.set_label(f"{node.name()} project-tree")
+                project_properties_form = node.get_widget("project_properties_form")
+                project = project_properties_tree.get_custom_widget().tree_view.model().project
+                project_properties_form.get_custom_widget().project_code_input.setText(project.root.name)
+                project_properties_form.get_custom_widget().project_name_input.setText(project.name)
     
     @pyqtSlot(QModelIndex)
     def create_media_source_node_from_listview_double_click(self, model_index, position=[0, 0]):

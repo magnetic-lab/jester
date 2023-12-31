@@ -48,3 +48,7 @@ class JesterDirectory:
     
     def is_root(self):
         return not isinstance(self.parent, JesterDirectory)
+    
+    def set_name(self, name):
+        self.name = name
+        return name

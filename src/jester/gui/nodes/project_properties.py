@@ -55,12 +55,12 @@ class ProjectPropertiesFormWidget(QWidget):
 
     def _setup_ui(self):
         layout = QHBoxLayout(self)
-        project_code_input = QLineEdit("project-code")
-        project_name_input = QLineEdit("enter project-name")
-        layout.addWidget(project_code_input)
-        layout.addWidget(project_name_input)
-        layout.setStretchFactor(project_code_input, 1)
-        layout.setStretchFactor(project_name_input, 3)
+        self.project_code_input = QLineEdit("project-code")
+        self.project_name_input = QLineEdit("enter project-name")
+        layout.addWidget(self.project_code_input)
+        layout.addWidget(self.project_name_input)
+        layout.setStretchFactor(self.project_code_input, 1)
+        layout.setStretchFactor(self.project_name_input, 3)
 
 
 class ProjectPropertiesNodeTreeViewWidget(QWidget):
@@ -154,7 +154,16 @@ class ProjectPropertiesNode(BaseNode):
         super().__init__(*args, **kwargs)
         self.add_input("in")
         self.add_output("out")
+        self._setup_ui()
+
+    def _setup_ui(self):
         input_form = ProjectPropertiesFormWWrapper(parent=self.view)
         tree_view = ProjectPropertiesNodeTreeViewWrapper(parent=self.view)
         self.add_custom_widget(input_form)
         self.add_custom_widget(tree_view)
+
+        # signals
+        input_form.get_custom_widget().project_code_input.textChanged.connect(tree_view.get_custom_widget().tree_view.model().update_project_code)
+        input_form.get_custom_widget().project_code_input.textChanged.connect(tree_view.get_custom_widget().tree_view.model().project.root.set_name)
+        input_form.get_custom_widget().project_name_input.textChanged.connect(tree_view.get_custom_widget().tree_view.model().update_project_name)
+        input_form.get_custom_widget().project_name_input.textChanged.connect(tree_view.set_label)       

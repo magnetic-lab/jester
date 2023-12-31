@@ -4,12 +4,12 @@ from PyQt5.QtCore import (
     QAbstractItemModel,
     QModelIndex,
     Qt,
-    pyqtSignal
+    pyqtSignal,
+    pyqtSlot
 )
 
 from jester.core import (
     JesterProject,
-    JesterDirectory,
     LOGGER
 )
 
@@ -19,10 +19,9 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
 
     def __init__(self, project=None, *args, **kwargs) -> None:
         super(ProjectPropertiesTreeViewModel, self).__init__(*args, **kwargs)
-        self.project = project or JesterProject("JesterProject", "/".join([os.path.expanduser("~"), "jester_project_root"]))
+        self.project = project or JesterProject("jester_project", "/".join([os.path.expanduser("~"), "jester_project_root"]))
 
-    # re-implemented `QAbstractItemModel` methods #
-    ###############################################
+    # re-implemented `QAbstractItemModel` methods
 
     def rowCount(self, parentIndex):
         if not parentIndex.isValid():
@@ -58,8 +57,7 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
             return QModelIndex()
         return self.createIndex(parentItem.children.index(childItem), 0, parentItem)
     
-    # jester methods #
-    ##################
+    # jester methods
 
     def add_location(self, location: str):
         return self.project.add_location(location, qt_callback=self.__update_views_callback)
@@ -75,3 +73,13 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
         self.endInsertRows()
         self.directory_added.emit(index)
         return new_directory
+    
+    # slots
+
+    @pyqtSlot(str)
+    def update_project_code(self, text):
+        self.project.code = text
+
+    @pyqtSlot(str)
+    def update_project_name(self, text):
+        self.project.name = text

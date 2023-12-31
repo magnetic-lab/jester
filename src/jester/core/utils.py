@@ -61,3 +61,22 @@ def metadata_from_filepath(filepath):
 
 def is_media(filepath):
     return os.path.isfile(filepath) and filepath.endswith(".mp4")
+
+def project_tree_string(project, directory=None, indent=0):
+    # set initial values for root
+    directory = directory or project.root
+    
+    # For the root directory, we don't add the indent decoration
+    if indent == 0:
+        text = directory.name
+    else:
+        indent_decorator = "  " * indent + "|_"
+        text = f"{indent_decorator}{directory.name}"
+
+    for child in directory.children:
+        child_text = project.project_tree_string(child, indent + 1)
+        text += "\n" + child_text
+    return text
+
+def print_project_tree(project):
+    print(project.project_tree_string())
