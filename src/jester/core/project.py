@@ -3,20 +3,21 @@ from .directory import JesterDirectory
 
 
 class JesterProject:
-    def __init__(self, name, root_path):
+    def __init__(self, name, code, root_path):
         self.name = name
-        self.dirname = os.path.dirname(root_path)
+        self.code = code
+        self.dirname = os.path.dirname(root_path).replace("\\", "/")
         self.root = JesterDirectory(os.path.basename(root_path), self)
 
     def __repr__(self):
-        return f"{self.dirname}/{self.root.name}"
+        return f"<JesterProject: {self.root.path(JesterDirectory.ABSOLUTE)}>"
 
     def __str__(self) -> str:
         return self.__repr__()
 
     def add_location(self, target, children=None, qt_callback=None):
         target_directory = self.directory(target, return_existing=True)
-        existing_parts = target_directory.path(relative=True, include_root=False).split("/")
+        existing_parts = target_directory.path().split("/")
         target_parts = target.split("/")
 
         for node in [part for part in target_parts if part not in existing_parts]:

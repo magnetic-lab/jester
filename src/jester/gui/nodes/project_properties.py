@@ -70,7 +70,7 @@ class ProjectPropertiesNodeTreeViewWidget(QWidget):
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
-        tree_view_model = ProjectPropertiesTreeViewModel()
+        tree_view_model = ProjectPropertiesTreeViewModel(columns=2)
         self.tree_view = ProjectPropertiesTreeView()
         self.tree_view.setModel(tree_view_model)
         add_root_directory_button = QPushButton("+")
@@ -84,6 +84,9 @@ class ProjectPropertiesNodeTreeViewWidget(QWidget):
         self.add_directory_window.submitted.connect(self.add_location)
         tree_view_model.rowsInserted.connect(self.tree_view.expand_index)
         tree_view_model.rowsInserted.connect(self.tree_view.scroll_to_index)
+        tree_view_model.rowsInserted.connect(self.tree_view.openEditors)
+        tree_view_model.location_added.connect(self.tree_view.adjustSecondColumnWidth)
+        self.tree_view.expanded.connect(self.tree_view.openEditors)
 
     @pyqtSlot(str)
     def add_location(self, location: str):

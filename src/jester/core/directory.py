@@ -1,50 +1,70 @@
 from typing import Union
+from enum import Enum, auto
+import logging
+
+
+class PathMode(Enum):
+    ABSOLUTE = auto()
+    RELATIVE = auto()
+    RELATIVE_NO_ROOT = auto()
 
 
 class JesterDirectory:
-    def __init__(self, name, parent=None, children=None, type=None):
+
+    ABSOLUTE = PathMode.ABSOLUTE
+    RELATIVE = PathMode.RELATIVE
+    RELATIVE_NO_ROOT = PathMode.RELATIVE_NO_ROOT
+
+    def __init__(self, name, parent, children=None, type=None):
         self.name = name
         self.parent = parent
         self.type = 0
         self.children = children or list()
 
     def __repr__(self) -> str:
-        parent = self.parent
-        if not isinstance(parent, JesterDirectory):
-            # project directory-root
-            return self.name
-        return f"{parent}/{self.name}"
+        return f"<JesterDirectory: {self.path()}>"
     
     def __str__(self) -> str:
         return self.__repr__()
 
     def append_child(self, child: Union[str, "JesterDirectory"]):
         if isinstance(child, str):
-            child = JesterDirectory(child)
+            child = JesterDirectory(child, self)
         self.children.append(child)
-        child.parent = self
         return child
     
-    def path(self, relative=False, include_root=False, _node=None):
-        if relative:
-            if include_root:
-                parts = self.__str__().split("/")
-            else:
-                parts = self.__str__().split("/")
-                subtract_str = self.project().root.name
-                parts.pop(parts.index(subtract_str))
-            result = "/".join(parts) if len(parts) else ""
-            return result
-        node = _node or self
-        if isinstance(node, JesterDirectory):
-            return self.path(relative=relative, include_root=include_root, _node=node.parent)
-        return "/".join([node.dirname, self.__str__()])
+    def insert_child(self, index: int, child: Union[str, "JesterDirectory"]):
+        if isinstance(child, str):
+            child = JesterDirectory(child, self)
+        self.children.insert(index, child)
+        return child
     
-    def project(self, _node=None):
-        node = _node or self
-        if isinstance(node, JesterDirectory):
-            return self.project(node.parent)
+    def path(self, mode=PathMode.ABSOLUTE):
+        path_parts = []
+        node = self
+
+        # Traverse up the hierarchy to build the path
+        while isinstance(node, JesterDirectory):
+            path_parts.insert(0, node.name)
+            node = node.parent
+
+        # Handle path mode
+        if mode == PathMode.RELATIVE:
+            return "/".join(path_parts)
+        elif mode == PathMode.RELATIVE_NO_ROOT:
+            path_parts.pop(0)  # Remove root directory name
+            return "/".join(path_parts)
+        else:  # Default to ABSOLUTE
+            project_dir = self.project().dirname
+            return f"{project_dir}/{'/'.join(path_parts)}"
+
+    
+    def project(self):
+        node = self
+        while isinstance(node, JesterDirectory):
+            node = node.parent
         return node
+
     
     def is_root(self):
         return not isinstance(self.parent, JesterDirectory)
