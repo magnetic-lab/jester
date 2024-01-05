@@ -16,7 +16,6 @@ from jester.gui import (
 
 def debug(main_window):
     pp_node = main_window.turnover_window.graph.create_node("jester.core.ProjectPropertiesNode", "The Amazing First Project!")
-    pp_node.get_widget("project_properties_tree").set_value(lambda project: print(project))
     pass
 
 def show_command(*args, **kwargs):

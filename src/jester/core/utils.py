@@ -3,18 +3,9 @@
 import os
 from collections import namedtuple
 import importlib.metadata
-import logging
 
 from ffprobe import FFProbe
 import yaml
-
-
-def setup_logger():
-    logger = logging.getLogger("jester")
-    logger.setLevel(logging.DEBUG)
-    return logger
-
-LOGGER = setup_logger()
 
 def data_from_directory(directory_path):
     """Retreive data from target directory.
