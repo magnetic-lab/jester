@@ -1,3 +1,5 @@
+from enum import Enum, auto
+
 from PyQt5.QtWidgets import (
     QTreeView,
     QPushButton,
@@ -16,21 +18,29 @@ from PyQt5.QtCore import (
 )
 
 
+class ButtonAction(Enum):
+
+    ADD = auto()
+    REMOVE = auto()
+    UP = auto()
+    DOWN = auto()
+    EDIT = auto()
+
 class ButtonGroupWidget(QWidget):
 
-    add_button_clicked = pyqtSignal(int, QModelIndex)
+    add_button_clicked = pyqtSignal(str, QModelIndex)
     remove_button_clicked = pyqtSignal(int, QModelIndex)
     up_button_clicked = pyqtSignal(QModelIndex)
     down_button_clicked = pyqtSignal(QModelIndex)
     edit_button_clicked = pyqtSignal(QModelIndex)
 
-    ADD = 0
-    REMOVE = 1
-    UP = 2
-    DOWN = 3
-    EDIT = 4
+    ADD = ButtonAction.ADD
+    REMOVE = ButtonAction.REMOVE
+    UP = ButtonAction.UP
+    DOWN = ButtonAction.DOWN
+    EDIT = ButtonAction.EDIT
 
-    def __init__(self, index: QModelIndex, parent: QWidget = None):
+    def __init__(self, index: QModelIndex = QModelIndex(), parent: QWidget = None):
         super().__init__(parent)
         self.index = index
         self._setup_ui()
@@ -41,12 +51,32 @@ class ButtonGroupWidget(QWidget):
         layout.setSpacing(0)
         self.setLayout(layout)
         self.button_group = self.setup_buttons()
+        self.button_group.setExclusive(False)  # remove toggle-behavior
         self.button_group.buttonClicked[int].connect(self.on_button_group_clicked)
+    
+    @pyqtSlot(QModelIndex, int, int)
+    def handle_rows_inserted(self, parent, first, last):
+        # not adjustments needed for rows inserted in other parents or, rows below current
+        if self.index.parent() != parent or self.index.row() < first:
+            return
+        # calculate and apply the offset for insertion
+        offset = last - first + 1
+        self.index = self.index.model().index(self.index.row() + offset, self.index.column(), parent)
+
+    @pyqtSlot(QModelIndex, int, int)
+    def handle_rows_removed(self, parent, first, last):
+        # no adjustments needed for rows deleted from other parents or, rows below current
+        if self.index.parent() != parent or self.index.row() <= first:
+            return
+        # calculate and apply the offset for removal
+        offset = last - first + 1
+        self.index = self.index.model().createIndex(self.index.row() - offset, self.index.column(), self.index.internalPointer())
 
     def totalWidth(self):
         if not self.button_group.buttons():
             return 0
-        # button_width = self.button_group.buttons()[0].sizeHint().width()
+        # TODO: this should use sizeHint rather than a hard-coded value - need to revisit
+        #       example: `button_width = self.button_group.buttons()[0].sizeHint().width()`
         button_width = 10
         return len(self.button_group.buttons()) * button_width
 
@@ -59,10 +89,10 @@ class ButtonGroupWidget(QWidget):
             "d": self.DOWN,
             "e": self.EDIT
         }
-        for button_name, constant in buttons_map.items():
+        for button_name, enum in buttons_map.items():
             button = QPushButton(button_name, self)
             button.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
-            button_group.addButton(button, constant)
+            button_group.addButton(button, enum.value)
             self.layout().addWidget(button)
         return button_group
 
@@ -77,25 +107,28 @@ class ButtonGroupWidget(QWidget):
             self.EDIT: self.edit_button_clicked,
         }
         args_map = {
-            self.ADD: (clicked_index.row(), clicked_index),
+            self.ADD: (None, clicked_index),  # TODO: this is where we would include the name for newly created directories
             self.REMOVE: (clicked_index.row(), clicked_index.parent()),
             self.UP: self.up_button_clicked,
             self.DOWN: self.down_button_clicked,
             self.EDIT: self.edit_button_clicked
         }
-        result = signal_map[id].emit(*args_map[id])
+        result = signal_map[ButtonAction(id)].emit(*args_map[ButtonAction(id)])
         return result
 
 class ButtonGroupDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         if index.column() == 1:
             treeview_model = self.parent().model()
+            # this is where we associate a `QModelIndex` to the `ButtonGroupWidget`, so 
             button_group = ButtonGroupWidget(index, parent)
-            button_group.add_button_clicked.connect(treeview_model.insertRow)
+            button_group.add_button_clicked.connect(treeview_model.append_child_row)
             button_group.remove_button_clicked.connect(treeview_model.removeRow)
             button_group.up_button_clicked.connect(treeview_model.moveRow)
             button_group.down_button_clicked.connect(treeview_model.moveRow)
             button_group.edit_button_clicked.connect(treeview_model.edit_row)
+            treeview_model.rowsAboutToBeInserted.connect(button_group.handle_rows_inserted)
+            treeview_model.rowsAboutToBeRemoved.connect(button_group.handle_rows_removed)
             return button_group
         return super().createEditor(parent, option, index)
 
@@ -125,7 +158,7 @@ class ProjectPropertiesTreeView(QTreeView):
     def adjustSecondColumnWidth(self):
         # Assuming all ButtonGroupWidgets will have the same width
         if self.model() and self.model().rowCount() > 0:
-            temp_widget = ButtonGroupWidget(index=-1)
+            temp_widget = ButtonGroupWidget()
             column_width = temp_widget.totalWidth()
             self.setColumnWidth(1, column_width)
 

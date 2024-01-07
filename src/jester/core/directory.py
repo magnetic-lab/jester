@@ -1,6 +1,5 @@
 from typing import Union
 from enum import Enum, auto
-import logging
 
 
 class PathMode(Enum):

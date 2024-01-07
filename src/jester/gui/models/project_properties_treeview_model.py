@@ -22,22 +22,29 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
         self.project = project or JesterProject("jester_project", "jep", "/".join([os.path.expanduser("~"), "jep"]))
 
     # re-implemented `QAbstractItemModel` methods
-        
-    def insertRow(self, row: int, parentIndex: QModelIndex = ...) -> bool:
-        if not parentIndex.isValid():
-            parent_directory = self.project.root
-        else:
+    
+    def insertRow(self, row: int, name: str, parentIndex: QModelIndex = ...) -> bool:
+        if row < 0 or row > self.rowCount(parentIndex):
+            return False
+        # NOTE: It's possible for incoming index's to be from column 1 (when the user clicked a button-group).
+        #       This will break the model/view relationship due to our model being hard-coded to 0-columns so,
+        #       we hard-set all insertions to be at column 0 regardless of the incoming index.
+        parentIndex = self.createIndex(parentIndex.row(), 0, parentIndex.internalPointer())
+        self.beginInsertRows(parentIndex, row, row)
+        if parentIndex.isValid():
             parent_directory = parentIndex.internalPointer()
-        start, end = len(parent_directory.children), len(parent_directory.children)
-        parentIndex = self.createIndex(row, 0, parent_directory)
-        self.beginInsertRows(parentIndex, start, end)
-        parent_directory.append_child(f"directory_{start}")
+            parent_directory.append_child(name)
+        else:
+            self.project.root.append_child(name)
         self.endInsertRows()
         return True
     
     def removeRow(self, row: int, parentIndex: QModelIndex = ...) -> bool:
         if row < 0 or row >= self.rowCount(parentIndex):
             return False
+        # NOTE: all model operations must be on column 0 or the model/view relationships will break
+        if parentIndex.column() > 0:
+            parentIndex = self.createIndex(parentIndex.row(), 0, parentIndex.internalPointer())
         self.beginRemoveRows(parentIndex, row, row)
         if parentIndex.isValid():
             parent_directory = parentIndex.internalPointer()
@@ -50,8 +57,8 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
     def rowCount(self, parentIndex=QModelIndex()):
         if not parentIndex.isValid():
             return len(self.project.root.children)
-        parentItem = parentIndex.internalPointer()
-        return len(parentItem.children)
+        parent_item = parentIndex.internalPointer()
+        return len(parent_item.children)
 
     def columnCount(self, parentIndex):
         return self._column_count
@@ -59,6 +66,7 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
     def data(self, index, role):
         if not index.isValid() or role != Qt.DisplayRole:
             return None
+        # NOTE: this is how we prevent any data populating behind our button-groups in column-1
         if index.column() > 0:
             return None
         item = index.internalPointer()
@@ -68,22 +76,32 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
         if not self.hasIndex(row, column, parentIndex):
             return QModelIndex()
         if not parentIndex.isValid():
-            parentItem = self.project.root
+            parent_item = self.project.root
         else:
-            parentItem = parentIndex.internalPointer()
-        childItem = parentItem.children[row]
-        return self.createIndex(row, column, childItem)
+            parent_item = parentIndex.internalPointer()
+        child_item = parent_item.children[row]
+        return self.createIndex(row, column, child_item)
 
     def parent(self, index):
         if not index.isValid():
             return QModelIndex()
-        childItem = index.internalPointer()
-        parentItem = childItem.parent
-        if parentItem == self.project.root:
+        child_item = index.internalPointer()
+        parent_item = child_item.parent
+        if parent_item == self.project.root:
             return QModelIndex()
-        return self.createIndex(parentItem.children.index(childItem), 0, parentItem)
+        return self.createIndex(parent_item.parent.children.index(parent_item), 0, parent_item)
     
     # jester methods
+
+    def append_child_row(self, name: str = None, parent_index: QModelIndex = QModelIndex()):
+        row = self.rowCount(parent_index)
+        # TODO: this auto-naming doesn't really hold up when removing and re-adding rows. Should be replaced
+        #       by a directory naming prompt. I vote for using `jester.gui.nodes.project_properties.AddNewDirectoryWindow`
+        name = name or f"directory_{row}"
+        return self.insertRow(row, name, parent_index)
+
+    def edit_row(self):
+        pass
 
     def add_location(self, location: str):
         new_location = self.project.add_location(location, qt_callback=self.__update_views_callback)

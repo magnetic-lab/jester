@@ -85,6 +85,7 @@ class ProjectPropertiesNodeTreeViewWidget(QWidget):
         tree_view_model.rowsInserted.connect(self.tree_view.expand_index)
         tree_view_model.rowsInserted.connect(self.tree_view.scroll_to_index)
         tree_view_model.rowsInserted.connect(self.tree_view.openEditors)
+        tree_view_model.rowsRemoved.connect(self.tree_view.openEditors)
         tree_view_model.location_added.connect(self.tree_view.adjustSecondColumnWidth)
         self.tree_view.expanded.connect(self.tree_view.openEditors)
 
