@@ -90,7 +90,31 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
         if parent_item == self.project.root:
             return QModelIndex()
         return self.createIndex(parent_item.parent.children.index(parent_item), 0, parent_item)
+
+    def flags(self, index: QModelIndex) -> Qt.ItemFlags:
+        if not index.isValid():
+            return Qt.NoItemFlags
+
+        # Default flags for all items
+        defaultFlags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+        # Make specific items editable
+        if index.column() == 0:
+            return defaultFlags | Qt.ItemIsEditable
+
+        return defaultFlags
     
+    def setData(self, index: QModelIndex, value, role: int) -> bool:
+        if not index.isValid() or role != Qt.EditRole:
+            return False
+
+        if index.column() == 0:
+            index.internalPointer().name = value
+            self.dataChanged.emit(index, index, [role])
+            return True
+
+        return False
+
     # jester methods
 
     def append_child_row(self, name: str = None, parent_index: QModelIndex = QModelIndex()):

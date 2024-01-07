@@ -84,14 +84,17 @@ class ProjectPropertiesNodeTreeViewWidget(QWidget):
         self.add_directory_window.submitted.connect(self.add_location)
         tree_view_model.rowsInserted.connect(self.tree_view.expand_index)
         tree_view_model.rowsInserted.connect(self.tree_view.scroll_to_index)
-        tree_view_model.rowsInserted.connect(self.tree_view.openEditors)
-        tree_view_model.rowsRemoved.connect(self.tree_view.openEditors)
-        tree_view_model.location_added.connect(self.tree_view.adjustSecondColumnWidth)
-        self.tree_view.expanded.connect(self.tree_view.openEditors)
+        tree_view_model.rowsInserted.connect(self.tree_view.show_button_group)
+        tree_view_model.rowsRemoved.connect(self.tree_view.show_button_group)
+        self.tree_view.expanded.connect(self.expand_index)
 
     @pyqtSlot(str)
     def add_location(self, location: str):
         self.tree_view.model().add_location(location)
+    
+    @pyqtSlot(QModelIndex)
+    def expand_index(self, index: QModelIndex):
+        self.tree_view.show_button_group(index.parent(), index.row(), index.column())
 
 # wrappers
 
