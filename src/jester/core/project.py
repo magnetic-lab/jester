@@ -1,5 +1,5 @@
 import os
-from .directory import JesterDirectory
+from .filesystem_entity import JesterDirectory
 
 
 class JesterProject:

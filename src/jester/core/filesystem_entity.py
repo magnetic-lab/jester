@@ -1,5 +1,11 @@
+import os
+
 from typing import Union
-from enum import Enum, auto
+
+from enum import (
+    Enum,
+    auto
+)
 
 
 class PathMode(Enum):
@@ -8,14 +14,25 @@ class PathMode(Enum):
     RELATIVE_NO_ROOT = auto()
 
 
-class JesterDirectory:
+class MediaType(Enum):
+    IMAGE = auto()
+    MOVIE = auto()
+    IMAGE_SEQUENCE = auto()
+
+
+class JesterFilesystemEntity:
+    def __init__(self, name) -> None:
+        self.name = name
+
+
+class JesterDirectory(JesterFilesystemEntity):
 
     ABSOLUTE = PathMode.ABSOLUTE
     RELATIVE = PathMode.RELATIVE
     RELATIVE_NO_ROOT = PathMode.RELATIVE_NO_ROOT
 
-    def __init__(self, name, parent, children=None, type=None):
-        self.name = name
+    def __init__(self, name: str = "jester_directory", parent: Union["JesterDirectory", None] = None, children=None, type=None):
+        super().__init__(name)
         self.parent = parent
         self.type = 0
         self.children = children or list()
@@ -64,10 +81,26 @@ class JesterDirectory:
             node = node.parent
         return node
 
-    
     def is_root(self):
         return not isinstance(self.parent, JesterDirectory)
     
     def set_name(self, name):
         self.name = name
         return name
+    
+
+class JesterFile(JesterFilesystemEntity):
+    def __init__(self, name: str, directory: JesterDirectory = JesterDirectory()) -> None:
+        super().__init__(name)
+        self.directory = directory
+
+
+class JesterSourceMediaFile(JesterFile):
+
+    IMAGE = MediaType.IMAGE
+    MOVIE = MediaType.MOVIE
+    IMAGE_SEQUENCE = MediaType.IMAGE_SEQUENCE
+
+    def __init__(self, type: MediaType = MediaType.IMAGE, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = type
