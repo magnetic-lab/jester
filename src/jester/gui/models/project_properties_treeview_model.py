@@ -5,7 +5,11 @@ from PyQt5.QtCore import (
     QModelIndex,
     Qt,
     pyqtSignal,
-    pyqtSlot
+    pyqtSlot,
+    QMimeData,
+    QDataStream,
+    QByteArray,
+    QIODevice
 )
 
 from jester.core import (
@@ -92,17 +96,17 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
         return self.createIndex(parent_item.parent.children.index(parent_item), 0, parent_item)
 
     def flags(self, index: QModelIndex) -> Qt.ItemFlags:
-        if not index.isValid():
-            return Qt.NoItemFlags
-
         # Default flags for all items
-        defaultFlags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        default_flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
+        if not index.isValid():
+            return Qt.ItemIsDropEnabled | default_flags
+        
         # Make specific items editable
         if index.column() == 0:
-            return defaultFlags | Qt.ItemIsEditable
+            return default_flags | Qt.ItemIsEditable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
 
-        return defaultFlags
+        return default_flags
     
     def setData(self, index: QModelIndex, value, role: int) -> bool:
         if not index.isValid() or role != Qt.EditRole:
@@ -114,6 +118,55 @@ class ProjectPropertiesTreeViewModel(QAbstractItemModel):
             return True
 
         return False
+    
+    def mimeTypes(self):
+        return ['application/vnd.treeviewdragdrop.index']
+    
+    def mimeData(self, indexes):
+        mimeData = super(ProjectPropertiesTreeViewModel, self).mimeData(indexes)
+        # Encoding the row and column of the index to be dragged
+        encodedData = QByteArray()
+        stream = QDataStream(encodedData, QIODevice.WriteOnly)
+
+        for index in indexes:
+            if index.isValid():
+                row = index.row()
+                column = index.column()
+                data = index.data(Qt.DisplayRole)
+                # Convert the string to bytes
+                if isinstance(data, str):
+                    data = data.encode()  # Encoding the string to bytes
+                stream.writeInt32(row)
+                stream.writeInt32(column)
+                stream.writeString(data)
+
+        mimeData.setData('application/vnd.treeviewdragdrop.index', encodedData)
+        return mimeData
+
+    def dropMimeData(self, data, action, row, column, parentIndex):
+        if action == Qt.IgnoreAction:
+            return True
+
+        if not data.hasFormat('application/vnd.treeviewdragdrop.index'):
+            return False
+
+        # Decode the data to find out which item was dragged
+        encodedData = data.data('application/vnd.treeviewdragdrop.index')
+        stream = QDataStream(encodedData, QIODevice.ReadOnly)
+
+        while not stream.atEnd():
+            sourceRow = stream.readInt32()
+            sourceColumn = stream.readInt32()
+            text = stream.readString()
+
+            # Implement the logic to update your model based on the drop
+            # This typically involves moving the dragged item to become a child of the drop target
+            # ...
+
+        return True
+    
+    def supportedDropActions(self):
+        return Qt.CopyAction | Qt.MoveAction
 
     # jester methods
 

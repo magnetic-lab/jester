@@ -6,11 +6,11 @@ from PyQt5.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QButtonGroup,
-    QSizePolicy
+    QSizePolicy,
+    QAbstractItemView
 )
 
 from PyQt5.QtCore import (
-    QSize,
     pyqtSlot,
     pyqtSignal,
     QModelIndex
@@ -97,6 +97,11 @@ class ProjectPropertiesTreeView(QTreeView):
         super().__init__(*args, **kwargs)
         self.setHeaderHidden(True)
         self.setIndentation(5)
+        self.setDragDropMode(QAbstractItemView.DragDrop)
+        self.setDragEnabled(True)
+        self.setAcceptDrops(True)
+        self.setDropIndicatorShown(True)
+        self.viewport().setAcceptDrops(True)
 
     # re-implemented `QTreeView` methods
 
