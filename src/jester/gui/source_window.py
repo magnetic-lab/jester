@@ -39,6 +39,9 @@ class JesterSourceWindow(QWidget):
         file_system_model = JesterFileSystemModel()
         # file_system_model.setRootPath(file_system_model.data())
         self.file_system_view.setModel(file_system_model)
+        # hide columns other than "name"
+        for column in range(1, file_system_model.columnCount()):
+            self.file_system_view.hideColumn(column)
         self.file_system_view.setRootIndex(file_system_model.index(file_system_model.rootPath()))
        
         # size policies
