@@ -11,7 +11,8 @@ from PyQt5.QtWidgets import (
     QWidget,
     QSizePolicy,
     QLineEdit,
-    QPushButton
+    QPushButton,
+    QAbstractItemView
 )
 
 from NodeGraphQt import (
@@ -111,16 +112,16 @@ class ProjectPropertiesFormWWrapper(NodeBaseWidget):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
 
     def get_value(self, callback=None):
-        if not callback:
-            return
         widget = self.get_custom_widget()
+        if not callback:
+            return widget
         return callback(widget)
 
     def set_value(self, data=None, callback=None):
         if not (data and callback):
             return
         widget = self.get_custom_widget()
-        callback(data, widget)
+        return callback(data, widget)
 
 
 class ProjectPropertiesNodeTreeViewWrapper(NodeBaseWidget):
@@ -130,10 +131,9 @@ class ProjectPropertiesNodeTreeViewWrapper(NodeBaseWidget):
         self.set_label("project tree")  # not setting label during initializing causes sizing issues.
         self._setup_ui()
 
-    def _setup_ui(self, ):
-        treeview_widget = ProjectPropertiesNodeTreeViewWidget()
+    def _setup_ui(self):
+        treeview_widget = ProjectPropertiesNodeTreeViewWidget(self.parent())
         self.set_custom_widget(treeview_widget)
-        # size-policies
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     def get_value(self):
@@ -159,7 +159,7 @@ class ProjectPropertiesNode(BaseNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.add_input("in")
+        self.add_input("in", multi_input=True)
         self.add_output("out")
         self._setup_ui()
 
