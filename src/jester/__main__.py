@@ -17,7 +17,7 @@ from jester.gui import (
 )
 
 def debug(main_window):
-    graph = main_window.turnover_window.graph
+    graph = main_window.graph_window.graph
     pp_node = graph.create_node("jester.core.ProjectPropertiesNode", "The Amazing First Project!")
     pp_node.set_pos(500, 400)
     fc_node = graph.create_node("jester.core.FileCopyNode")

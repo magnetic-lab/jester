@@ -4,17 +4,19 @@ from PyQt5.QtCore import (
 )
 
 from PyQt5.QtWidgets import (
-    QFormLayout,
     QVBoxLayout,
     QSizePolicy,
     QWidget,
-    QPushButton
+    QPushButton,
+    QListView
 )
 
 from NodeGraphQt import (
     BaseNode,
     NodeBaseWidget
 )
+
+from jester.gui.models import JesterCopyListModel
 
 
 class FileCopyNodeFormWidget(QWidget):
@@ -24,10 +26,20 @@ class FileCopyNodeFormWidget(QWidget):
     
     def _setup_ui(self):
         main_layout = QVBoxLayout(self)
-        self.form_layout = QFormLayout(self)
-        self.copy_button = QPushButton("Copy")
-        main_layout.addLayout(self.form_layout)
-        main_layout.addWidget(self.copy_button)
+        self.copy_list = QListView(self)
+        listview_model = JesterCopyListModel([])
+        self.copy_list.setModel(listview_model)
+        self.copy_all_button = QPushButton("copy all")
+        main_layout.addWidget(self.copy_list)
+        main_layout.addWidget(self.copy_all_button)
+    
+    def add_source(self, data_handler):
+        model = self.copy_list.model()
+        model.append(data_handler)
+    
+    def remove_source(self, data_handler):
+        model = self.copy_list.model()
+        model.remove(data_handler)
 
 
 class FileCopyNodeFormWrapper(NodeBaseWidget):
@@ -71,17 +83,19 @@ class FileCopyNode(BaseNode):
         form_widget_wrapper = FileCopyNodeFormWrapper(parent=self.view)
         self.add_custom_widget(form_widget_wrapper)
 
-        # signals
-        form_widget_wrapper.get_custom_widget().copy_button.clicked.connect(self.copy)
+    def add_source(self, data_handler):
+        self.get_widget("form").get_custom_widget().add_source(data_handler)
     
-    def on_input_connected(self, in_port, out_port):
-        connected_node = out_port.node()
-        properties = connected_node.properties()
-        pass
+    def remove_source(self, data_handler):
+        self.get_widget("form").get_custom_widget().remove_source(data_handler)
 
-    def copy(self):
-        media_source_nodes = self._find_media_source_nodes()
-        pass
+    def on_upstream_input_connected(self, node):
+        for media_source_node in self._find_media_source_nodes(node):
+            self.add_source(media_source_node.data_handler)
+
+    def on_upstream_input_disconnected(self, node):
+        for media_source_node in self._find_media_source_nodes(node):
+            self.remove_source(media_source_node.data_handler)
 
     def _find_media_source_nodes(self, node=None, visited=None):
         node = node or self

@@ -5,18 +5,41 @@ class Data:
     def __init__(self, data: dict = dict()):
         self._data = data
 
+    @property
+    def data(self):
+        return self._data
+
 
 class MediaData(Data):
-    def __init__(self, file_path, metadata=None, ffmpeg_params=None):
-        _data = {
-            "file_path": file_path,
-            "metadata": metadata,
-            "ffmpeg_params": ffmpeg_params
+    def __init__(self, file_path=None):
+        data = {
+            "file_path": file_path
         }
-        super().__init__(_data)
-        self.file_path = self._data.get(file_path)
-        self.metadata = self._data.get(metadata)
-        self.ffmpeg_params = self._data.get(ffmpeg_params)
+        super().__init__(data)
+    
+    @property
+    def file_path(self):
+        return self.data.get("file_path")
+
+    @file_path.setter
+    def file_path(self, value):
+        self.data["file_path"] = value
+
+    @property
+    def metadata(self):
+        return self.data.get("metadata")
+
+    @metadata.setter
+    def metadata(self, value):
+        self.data["metadata"] = value
+
+    @property
+    def ffmpeg_params(self):
+        return self.data.get("ffmpeg_params")
+
+    @ffmpeg_params.setter
+    def ffmpeg_params(self, value):
+        self.data["ffmpeg_params"] = value
 
 
 class JSONData(Data):

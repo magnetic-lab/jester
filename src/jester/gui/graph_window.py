@@ -20,11 +20,11 @@ from NodeGraphQt import (
 from jester.gui import nodes
 
 
-class JesterTurnoverWindow(QWidget):
+class JesterGraphWindow(QWidget):
     """This is the main window of the application."""
 
     def __init__(self, *args, **kwargs):
-        super(JesterTurnoverWindow, self).__init__(*args, **kwargs)
+        super(JesterGraphWindow, self).__init__(*args, **kwargs)
         self._setup_ui()
         self._register_nodes()
 
@@ -45,7 +45,8 @@ class JesterTurnoverWindow(QWidget):
 
         # signals
         self.graph.node_created.connect(self.update_node_properties_after_creation)
-
+        self.graph.port_connected.connect(self.on_port_connected)
+        self.graph.port_disconnected.connect(self.on_port_disconnected)
     
     def _register_nodes(self):
         self.graph.register_nodes(
@@ -61,6 +62,37 @@ class JesterTurnoverWindow(QWidget):
         )
         pass
 
+    def on_port_connected(self, in_port, out_port):
+        self._traverse_and_notify_output_nodes(in_port.node(), out_port.node(), "on_upstream_input_connected")
+
+    def on_port_disconnected(self, in_port, out_port):
+        in_node = in_port.node()
+        out_node = out_port.node()
+
+        self._traverse_and_notify_output_nodes(in_port.node(), out_port.node(), "on_upstream_input_disconnected")
+
+    def _traverse_and_notify_output_nodes(self, in_node, out_node, notify_method, node=None, visited=None):
+        if notify_method == "on_upstream_input_connected":
+            node = node or out_node
+        elif notify_method == "on_upstream_input_disconnected":
+            node = node or in_node
+        visited = visited or set()
+
+        if node in visited:
+            return
+        visited.add(node)
+
+        for port, nodes in node.connected_output_nodes().items():
+            for connected_node in nodes:
+                if connected_node not in visited:
+                    # Call the method on the connected node
+                    if hasattr(connected_node, notify_method):
+                        notify_method_ = getattr(connected_node, notify_method)
+                        notify_method_(out_node)
+
+                    # Recursively traverse the output nodes of the connected node
+                    self._traverse_and_notify_output_nodes(in_node, out_node, notify_method, connected_node, visited)
+
 
     @pyqtSlot(NodeObject)
     def update_node_properties_after_creation(self, node=None):
@@ -72,14 +104,17 @@ class JesterTurnoverWindow(QWidget):
                 project = project_properties_tree.get_custom_widget().tree_view.model().project
                 project_properties_form.get_custom_widget().project_code_input.setText(project.root.name)
                 project_properties_form.get_custom_widget().project_name_input.setText(project.name)
-    
+
     @pyqtSlot(QModelIndex)
-    def create_media_source_node_from_listview_double_click(self, model_index, position=[0, 0]):
-        model = model_index.model()
-        if model.isDir(model_index):
+    def on_filesystem_view_item_double_clicked(self, index, position=[0, 0]):
+        model = index.model()
+        if model.isDir(index):
             return
+
+        absolute_path = model.filePath(index)
         # Create a new instance of the MediaSourceNode
-        media_source_node = nodes.MediaSourceNode(model_index.data())
+        media_source_node = nodes.MediaSourceNode()
+        media_source_node.set_file_path(absolute_path)
         
         # Set the node's position
         media_source_node.set_pos(position[0], position[1])

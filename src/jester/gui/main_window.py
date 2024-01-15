@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (
     QSizePolicy
 )
 from jester.gui.source_window import JesterSourceWindow
-from jester.gui.graph_window import JesterTurnoverWindow
+from jester.gui.graph_window import JesterGraphWindow
 from jester.gui import nodes
 
 
@@ -48,18 +48,18 @@ class JesterMainWindow(QMainWindow):
 
         # Create the source window and turnover window widgets
         self.source_window = JesterSourceWindow(central_splitter_widget)
-        self.turnover_window = JesterTurnoverWindow(central_splitter_widget)
+        self.graph_window = JesterGraphWindow(central_splitter_widget)
         
         # Add the source and turnover windows to the central splitter
         central_splitter_widget.addWidget(self.source_window)
-        central_splitter_widget.addWidget(self.turnover_window)
+        central_splitter_widget.addWidget(self.graph_window)
         
         # Set the stretch factors for the widgets in the splitter
         central_splitter_widget.setStretchFactor(0, 1)
         central_splitter_widget.setStretchFactor(1, 2)
 
         # signal connections
-        self.source_window.file_system_view.doubleClicked.connect(self.turnover_window.create_media_source_node_from_listview_double_click)
+        self.source_window.file_system_view.doubleClicked.connect(self.graph_window.on_filesystem_view_item_double_clicked)
 
     def _load_stylesheet(self, stylesheet_name):
         # Determine the path to the CSS stylesheet file
