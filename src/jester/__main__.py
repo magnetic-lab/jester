@@ -4,9 +4,7 @@ import argparse
 import sys
 
 from PyQt5.QtWidgets import (
-    QApplication,
-    QWidget,
-    QVBoxLayout
+    QApplication
 )
 
 from PyQt5.QtCore import (
@@ -15,9 +13,7 @@ from PyQt5.QtCore import (
 )
 
 from jester.gui import (
-    JesterMainWindow,
-    models,
-    views
+    JesterMainWindow
 )
 
 def debug(main_window):
@@ -30,6 +26,7 @@ def debug(main_window):
     for i in range(10):
         source_node = graph.create_node("jester.core.MediaSourceNode", f"media_source_{i}")
         source_node.set_pos(10, i * 100)
+        source_node.set_file_path(f"source_node_{i}")
         source_node.set_output(0, pp_node.input(0))
 
 def show_command(*args, **kwargs):
