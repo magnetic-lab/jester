@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Custom model for QTableView objects."""
 import platform
+from typing import Dict
 
 from PyQt5.QtGui import (
     QStandardItem
@@ -12,8 +13,12 @@ from PyQt5.QtCore import (
     pyqtSignal,
     QThread,
     Qt,
-    QVariant
+    QVariant,
+    QByteArray
 )
+
+from jester.gui.enums import JesterUserRole
+
 
 class DriveListLoader(QThread):
     loaded = pyqtSignal(list)
@@ -36,43 +41,43 @@ class DriveListLoader(QThread):
 
 
 class JesterDrivesListModel(QAbstractListModel):
-    # custom role for retreiving original QStorageInfo object
-    StorageInfoRole = Qt.UserRole + 1
 
     def __init__(self, *args, **kwargs):
         super(JesterDrivesListModel, self).__init__(*args, **kwargs)
         self.thread = None
-        self._drives = []  # Initialize an internal list to store drives
+        # Initialize an internal list to store drives
+        # NOTE: no need to use fancy core logic for data storage here as this is strictly a GUI-only feature
+        self._drives = []
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role = Qt.DisplayRole):
         if not index.isValid() or not (0 <= index.row() < len(self._drives)):
             return QVariant()
 
         if role == Qt.DisplayRole:
             return self._drives[index.row()].data(Qt.DisplayRole)
-        elif role == self.StorageInfoRole:  # Check for custom role
+        elif role == JesterUserRole.StorageInfoRole:  # custom role for retreiving original `QStorageInfo`` object
             # Return additional data associated with the item (e.g., QStorageInfo)
             return self._drives[index.row()].data(self.StorageInfoRole)  # Assuming Qt.UserRole contains the additional data
 
         return QVariant()
 
-    def roleNames(self):
+    def roleNames(self) -> Dict[int, QByteArray]:
         # Define role names mapping for QML integration (if needed)
         roles = {
-            Qt.DisplayRole: b"displayRole",
-            self.StorageInfoRole: b"storageInfoRole"
+            Qt.DisplayRole: b"DisplayRole",
+            self.StorageInfoRole: b"StorageInfoRole"
         }
         return roles
     
     def rowCount(self, parent=QModelIndex()):
         return len(self._drives)
 
-    def flags(self, index):
+    def flags(self, index: QModelIndex):
         if not index.isValid():
             return Qt.NoItemFlags
         return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
 
-    def setData(self, index, value, role=Qt.EditRole):
+    def setData(self, index: QModelIndex, value: QStandardItem, role=Qt.DisplayRole):
         if not index.isValid() or not (0 <= index.row() < len(self._drives)):
             return False
         if role == Qt.DisplayRole:
@@ -84,14 +89,14 @@ class JesterDrivesListModel(QAbstractListModel):
             self.dataChanged.emit(index, index)
             return True
 
-    def insertRows(self, position, rows, index=QModelIndex()):
+    def insertRows(self, position: int, rows: int, index=QModelIndex()):
         self.beginInsertRows(index, position, position + rows - 1)
         for row in range(rows):
-            self._drives.insert(position, "")
+            self._drives.insert(position, QStandardItem(index.data()))
         self.endInsertRows()
         return True
 
-    def removeRows(self, position, rows, index=QModelIndex()):
+    def removeRows(self, position: int, rows: int, index=QModelIndex()):
         self.beginRemoveRows(index, position, position + rows - 1)
         for row in range(rows):
             del self._drives[position]
@@ -100,10 +105,10 @@ class JesterDrivesListModel(QAbstractListModel):
 
     # Additional list-like methods
 
-    def append(self, value):
+    def append(self, item: QStandardItem):
         self.insertRows(len(self._drives), 1)
         index = self.index(len(self._drives) - 1)
-        self.setData(index, value)
+        self.setData(index, item)
 
     def pop(self, index):
         if 0 <= index < len(self._drives):
@@ -134,5 +139,5 @@ class JesterDrivesListModel(QAbstractListModel):
     def __updateModel(model, drives):
         for storage in drives:
             item = QStandardItem(storage.rootPath())
-            item.setData(storage, JesterDrivesListModel.StorageInfoRole)
+            item.setData(storage, JesterUserRole.StorageInfoRole.value)
             model.append(item)
