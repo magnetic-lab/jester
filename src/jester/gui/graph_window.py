@@ -63,35 +63,28 @@ class JesterGraphWindow(QWidget):
         pass
 
     def on_port_connected(self, in_port, out_port):
-        self._traverse_and_notify_output_nodes(in_port.node(), out_port.node(), "on_upstream_input_connected")
+        self._traverse_and_notify_downstream_nodes(in_port.node(), out_port.node(), "on_upstream_input_connected")
 
     def on_port_disconnected(self, in_port, out_port):
-        in_node = in_port.node()
-        out_node = out_port.node()
+        self._traverse_and_notify_downstream_nodes(in_port.node(), out_port.node(), "on_upstream_input_disconnected")
 
-        self._traverse_and_notify_output_nodes(in_port.node(), out_port.node(), "on_upstream_input_disconnected")
+    def _traverse_and_notify_downstream_nodes(self, in_node, out_node, notify_method, node=None, visited=None):
+        if node is None:
+            node = in_node
+            visited = set()
 
-    def _traverse_and_notify_output_nodes(self, in_node, out_node, notify_method, node=None, visited=None):
-        if notify_method == "on_upstream_input_connected":
-            node = node or out_node
-        elif notify_method == "on_upstream_input_disconnected":
-            node = node or in_node
-        visited = visited or set()
+        # handle root case
+        if node not in visited:
+            visited.add(node)
+            if hasattr(node, notify_method):
+                notify_method_ = getattr(node, notify_method)
+                notify_method_(out_node)
 
-        if node in visited:
-            return
-        visited.add(node)
-
-        for port, nodes in node.connected_output_nodes().items():
-            for connected_node in nodes:
-                if connected_node not in visited:
-                    # Call the method on the connected node
-                    if hasattr(connected_node, notify_method):
-                        notify_method_ = getattr(connected_node, notify_method)
-                        notify_method_(out_node)
-
-                    # Recursively traverse the output nodes of the connected node
-                    self._traverse_and_notify_output_nodes(in_node, out_node, notify_method, connected_node, visited)
+            # recurse through all ports and their connected nodes
+            port_dict = node.connected_output_nodes()
+            for connected_nodes in port_dict.values():
+                for connected_node in connected_nodes:
+                    self._traverse_and_notify_downstream_nodes(in_node, out_node, notify_method, connected_node, visited)
 
 
     @pyqtSlot(NodeObject)

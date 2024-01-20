@@ -6,35 +6,35 @@
         {
           "type":"command",
           "label":"Open...",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"open_session",
           "shortcut":"QtGui.QKeySequence.Open"
         },
         {
           "type":"command",
           "label":"Import...",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"import_session",
           "shortcut":""
         },
         {
           "type":"command",
           "label":"Clear Session...",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"clear_session",
           "shortcut":""
         },
         {
           "type":"command",
           "label":"Save...",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"save_session",
           "shortcut":"QtGui.QKeySequence.Save"
         },
         {
           "type":"command",
           "label":"Save As...",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"save_session_as",
           "shortcut":"Ctrl+Shift+S"
         }
@@ -47,14 +47,14 @@
         {
           "type":"command",
           "label":"Clear Undo History",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"clear_undo",
           "shortcut":""
         },
         {
           "type":"command",
           "label":"Show Undo History",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"show_undo_view",
           "shortcut":""
         },
@@ -64,28 +64,28 @@
         {
           "type":"command",
           "label":"Copy",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"copy_nodes",
           "shortcut":"QtGui.QKeySequence.Copy"
         },
         {
           "type":"command",
           "label":"Cut",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"cut_nodes",
           "shortcut":"QtGui.QKeySequence.Cut"
         },
         {
           "type":"command",
           "label":"Paste",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"paste_nodes",
           "shortcut":"QtGui.QKeySequence.Paste"
         },
         {
           "type":"command",
           "label":"Delete",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"delete_nodes",
           "shortcut":"QtGui.QKeySequence.Delete"
         },
@@ -95,55 +95,55 @@
         {
           "type":"command",
           "label":"Select All",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"select_all_nodes",
           "shortcut":"Ctrl+A"
         },
         {
           "type":"command",
           "label":"Unselect All",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"clear_node_selection",
           "shortcut":"Ctrl+Shift+A"
         },
               {
           "type":"command",
           "label":"Invert Selection",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"invert_node_selection"
         },
         {
           "type":"command",
           "label":"Enable/Disable",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"disable_nodes",
           "shortcut":"D"
         },
         {
           "type":"command",
           "label":"Duplicate",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"duplicate_nodes",
           "shortcut":"Alt+C"
         },
         {
           "type":"command",
           "label":"Extract",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"extract_nodes",
           "shortcut":"Ctrl+Shift+X"
         },
         {
           "type":"command",
           "label":"Clear Connections",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"clear_node_connections",
           "shortcut":"Ctrl+D"
         },
         {
           "type":"command",
           "label":"Fit to Selection",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"fit_to_selection",
           "shortcut":"F"
         },
@@ -153,21 +153,21 @@
         {
           "type":"command",
           "label":"Zoom In",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"zoom_in",
           "shortcut":"="
         },
         {
           "type":"command",
           "label":"Zoom Out",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"zoom_out",
           "shortcut":"-"
         },
         {
           "type":"command",
           "label":"Reset Zoom",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"reset_zoom",
           "shortcut":"H"
         }
@@ -187,21 +187,21 @@
             {
               "type":"command",
               "label":"None",
-              "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+              "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
               "function_name":"bg_grid_none",
               "shortcut":"Alt+1"
             },
             {
               "type":"command",
               "label":"Lines",
-              "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+              "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
               "function_name":"bg_grid_lines",
               "shortcut":"Alt+2"
             },
             {
               "type":"command",
               "label":"Dots",
-              "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+              "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
               "function_name":"bg_grid_dots",
               "shortcut":"Alt+3"
             }
@@ -214,14 +214,14 @@
             {
               "type":"command",
               "label":"Horizontal",
-              "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+              "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
               "function_name":"layout_h_mode",
               "shortcut":"Shift+1"
             },
             {
               "type":"command",
               "label":"Vertical",
-              "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+              "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
               "function_name":"layout_v_mode",
               "shortcut":"Shift+2"
             }
@@ -236,7 +236,7 @@
         {
           "type":"command",
           "label":"Node Search",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"toggle_node_search",
           "shortcut":"Tab"
         },
@@ -246,14 +246,14 @@
         {
           "type":"command",
           "label":"Auto Layout Up Stream",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"layout_graph_up",
           "shortcut":"L"
         },
         {
           "type":"command",
           "label":"Auto Layout Down Stream",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"layout_graph_down",
           "shortcut":"Ctrl+L"
         },
@@ -263,7 +263,7 @@
         {
           "type":"command",
           "label":"Expand Group Node",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"expand_group_node",
           "shortcut":"Alt+Enter"
         }
@@ -276,21 +276,21 @@
         {
           "type":"command",
           "label":"Curved",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"curved_pipe",
           "shortcut":"Ctrl+1"
         },
         {
           "type":"command",
           "label":"Straight",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"straight_pipe",
           "shortcut":"Ctrl+2"
         },
         {
           "type":"command",
           "label":"Angle",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"angle_pipe",
           "shortcut":"Ctrl+3"
         }
@@ -303,49 +303,49 @@
         {
           "type":"command",
           "label":"FileCopyNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_file_copy_node",
           "shortcut":"Ctrl+C"
         },
         {
           "type":"command",
           "label":"MediaEncodeNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_media_encode_node",
           "shortcut":"Ctrl+E"
         },
         {
           "type":"command",
           "label":"MetadataNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_metadata_node",
           "shortcut":"Ctrl+D"
         },
         {
           "type":"command",
           "label":"FileRenameNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_file_rename_node",
           "shortcut":"Ctrl+R"
         },
         {
           "type":"command",
           "label":"MediaSourceNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_media_source_node",
           "shortcut":"Ctrl+M"
         },
         {
           "type":"command",
           "label":"ProjectPropertiesNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_show_properties_node",
           "shortcut":"Ctrl+P"
         },
         {
           "type":"command",
           "label":"TagNode",
-          "file":"C:/Users/PC/dev/jester/src/jester/gui/context_menu/context_menu.py",
+          "file":"/home/jacob/dev/jester/src/jester/gui/context_menu/context_menu.py",
           "function_name":"create_tag_node",
           "shortcut":"Ctrl+T"
         }
